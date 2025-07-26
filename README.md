@@ -1,65 +1,47 @@
-# coachlint README
+# 🤖 Coachlint
 
-This is the README for your extension "coachlint". After writing up a brief description, we recommend including the following sections.
+> AI-powered VS Code extension that explains compiler errors in simple terms
+
+**Status**: Work in Progress 🚧
+
+## What it does
+
+Transforms cryptic compiler errors into human-readable explanations using AI.
+
+```diff
+- Cannot find name 'undefinedVariable'
++ 🤖 You're using a variable that doesn't exist. Check the spelling or declare it first.
+```
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- ✅ Detects compilation errors from Python, Go 
+- ✅ Extracts error context and surrounding code
+- 🔄 AI explanations using Google Gemini (in progress)
+- ⏳ Interactive error help
 
-For example if there is an image subfolder under your extension project workspace:
+## Development
 
-\!\[feature X\]\(images/feature-x.png\)
+```bash
+git clone <repo>
+npm install
+code .
+# Press F5 to run
+```
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Testing
 
-## Requirements
+Create files with errors:
+```python
+// test.py
+# Creates error for testing
+print(undefined_variable)  # Runtime error
+def test():
+    return 1 + "string"    # Type error
+```
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+Check console for diagnostic extraction logs.
 
-## Extension Settings
+## License
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+MIT
