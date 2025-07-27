@@ -1,3 +1,6 @@
+
+![CoachLint Logo](images/logo.png)
+
 # CoachLint - Your AI Programming Coach
 
 [Boot.dev Hackathon](https://blog.boot.dev/news/hackathon-2025/)
@@ -27,8 +30,10 @@ This approach makes us lose the core skill that makes a software engineer valuab
 ### API Key Configuration
 1. Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 2. Open Command Palette (`Ctrl+Shift+P`)
-3. Type "CoachLint: Set API Key"
+3. Type `CoachLint: Set API Key`
 4. Enter your API key securely
+
+> API key is stored securely in the vscode configurations. Remove the key once done, using *CoachLint: Clear API Key* command
 
 ## Usage
 
@@ -49,9 +54,28 @@ This approach makes us lose the core skill that makes a software engineer valuab
 - `CoachLint: Show API Key Status` - Check configuration
 - `CoachLint: Clear API Key` - Remove stored API key
 
+# Demo Screenshots
+
+## Hovering over the error
+
+### Example 1
+![hover over error sample 1](images/demo/hover_error.png)
+
+### Example 2
+![hover over error sample 2](images/demo/hover_error2.png)
+
+
+## Code Review Command
+
+### Example 1
+
+![Code Review Example 1](images/demo/code_review.png)
+
+### Example 2
+![Code Review Example 2](images/demo/code_review2.png)
 ## Boot.dev Hackathon
 
-Created to promote **deep learning over shallow copying** in programming education.
+Thank you, [Boot.dev](https://www.boot.dev), for hosting this event and your amazing content!
 
 ---
 
