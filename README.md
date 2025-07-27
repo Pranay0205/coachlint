@@ -1,10 +1,7 @@
 # CoachLint - Your AI Programming Coach
 
-
 [Boot.dev Hackathon](https://blog.boot.dev/news/hackathon-2025/)
 
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) 
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 ![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white)
 ![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
@@ -13,11 +10,11 @@ CoachLint is your AI coding coach. It guides you through errors instead of ***ju
 
 ## My Motivation
 
-Students are becoming increasingly dependent on quick code fixes and instant code generation. When we use external AI tools, there's no middle ground - the AI just gives you the answer. Students copy-paste solutions without understanding the **why** behind them.
+Developers are becoming increasingly dependent on quick code fixes and instant code generation. When we use external AI tools, there's no middle ground - the AI just gives you the answer. People copy-paste solutions without understanding the **why** behind them.
 
 This approach makes us lose the core skill that makes a software engineer valuable: **understanding the problem and solving it systematically**.
 
-**AI is best for breaking down complex errors into very easy and understandable explanations.** I believe CoachLint will help students learn more deeply instead of developing shallow programming skills.
+**AI is best for breaking down complex errors into very easy and understandable explanations.** I believe CoachLint will help developers learn more deeply instead of developing shallow programming skills.
 
 ## Features
 
@@ -28,9 +25,10 @@ This approach makes us lose the core skill that makes a software engineer valuab
 ## Setup
 
 ### API Key Configuration
-1. Open Command Palette (`Ctrl+Shift+P`)
-2. Type "CoachLint: Set API Key"
-3. Enter your API key securely
+1. Get your Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Open Command Palette (`Ctrl+Shift+P`)
+3. Type "CoachLint: Set API Key"
+4. Enter your API key securely
 
 ## Usage
 
@@ -49,6 +47,7 @@ This approach makes us lose the core skill that makes a software engineer valuab
 - `CoachLint: Set API Key` - Configure API key
 - `CoachLint: Review Current File` - Get code suggestions
 - `CoachLint: Show API Key Status` - Check configuration
+- `CoachLint: Clear API Key` - Remove stored API key
 
 ## Boot.dev Hackathon
 
