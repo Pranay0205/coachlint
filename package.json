@@ -1,15 +1,39 @@
 {
   "name": "coachlint",
-  "displayName": "coachlint",
-  "description": "AI-powered coding coach that transforms harsh compiler errors into encouring, actionable, guidance",
+  "displayName": "CoachLint",
+  "description": "AI-powered coding coach that transforms harsh compiler errors into encouraging, actionable guidance",
   "icon": "images/logo.png",
   "version": "0.0.1",
+  "publisher": "PranayGhuge",
   "engines": {
     "vscode": "^1.102.0"
   },
   "categories": [
+    "Education",
     "Other"
   ],
+  "keywords": [
+    "ai",
+    "error-explanation",
+    "code-review",
+    "education",
+    "gemini",
+    "programming-coach",
+    "learning"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pranay0205/coachlint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Pranay0205/coachlint/issues"
+  },
+  "homepage": "https://github.com/Pranay0205/coachlint#readme",
+  "author": {
+    "name": "Pranay Ghuge",
+    "url": "https://pranayghuge.com"
+  },
+  "license": "MIT",
   "activationEvents": [
     "onStartupFinished"
   ],
@@ -52,7 +76,9 @@
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "vscode:prepublish": "npm run lint",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
@@ -63,6 +89,6 @@
     "eslint": "^9.25.1"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0"
+    "@google/generative-ai": "^0.24.1"
   }
 }
