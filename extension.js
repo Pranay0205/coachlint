@@ -2,88 +2,142 @@ const vscode = require('vscode');
 const apiwrapper = require('./apiwrapper')
 
 function activate(context) {
-	const diagnosticCollection = vscode.languages.createDiagnosticCollection('coachlint');
-	context.subscriptions.push(diagnosticCollection);
 
-	// Auto-process when diagnostics change (first time)
-	const disposable = vscode.languages.onDidChangeDiagnostics(event => { 
-		processAllErrors(event.uris);
-	});
+	// Cache explanations to avoid re-generating
+	const explanationCache = new Map();
 
-	// Manual command to re-process current file errors
-	const commandDisposable = vscode.commands.registerCommand('coachlint.explainCurrentErrors', () => {
-		console.log('Manual error explanation triggered');
-		
-		const activeEditor = vscode.window.activeTextEditor;
-		if (activeEditor) {
-			processAllErrors([activeEditor.document.uri]);
-		} else {
-			vscode.window.showInformationMessage('No active file to analyze');
+	// Command to set API key
+	const setApiKeyCommand = vscode.commands.registerCommand('coachlint.setApiKey', async () => {
+		const apiKey = await vscode.window.showInputBox({
+			prompt: 'Enter your API key for CoachLint',
+			password: true, // Hide the input for security
+			placeHolder: 'your-api-key-here',
+			validateInput: (value) => {
+				if (!value || value.trim().length === 0) {
+					return 'API key cannot be empty';
+				}
+				if (value.length < 10) {
+					return 'API key seems too short';
+				}
+				return null;
+			}
+		});
+
+		if (apiKey) {
+			// Store the API key in VS Code settings
+			await vscode.workspace.getConfiguration('coachlint').update('apiKey', apiKey, vscode.ConfigurationTarget.Global);
+			
+			vscode.window.showInformationMessage('✅ API key saved successfully!');
+			
+			// Clear cache when API key changes
+			explanationCache.clear();
 		}
 	});
 
-	function processAllErrors(uris) {
-		for (const uri of uris) {
-			const diagnostics = vscode.languages.getDiagnostics(uri);
-
-			// Filter for ACTUAL compilation/runtime errors only
-			const realErrors = diagnostics.filter(diagnostic => {
-				return isCompilationOrRuntimeError(diagnostic);
-			});
-
-			if (realErrors.length > 0) {
-				console.log(`🚨 Found ${realErrors.length} compilation/runtime errors`);
-				
-				realErrors.forEach(diagnostic => {
-					const errDetails = extractErrorDetails(uri, diagnostic);
-					
-					if (errDetails) {
-						logDiagnosticInput(errDetails);
-						
-						try {
-							// Send each error individually
-							apiwrapper.postErrorDetails(errDetails);
-							console.log('✅ Sent error to API');
-						} catch (error) {
-							console.log('❌ Failed to send to API:', error.message);
-						}
-					}
-				});
+	// Command to show current API key status
+	const showApiKeyStatusCommand = vscode.commands.registerCommand('coachlint.showApiKeyStatus', async () => {
+		const apiKey = getApiKey();
+		
+		if (apiKey) {
+			const maskedKey = apiKey.substring(0, 8) + '...';
+			vscode.window.showInformationMessage(`🔑 API key is set: ${maskedKey}`);
+		} else {
+			const action = await vscode.window.showWarningMessage(
+				'No API key set. CoachLint won\'t work without an API key.',
+				'Set API Key'
+			);
+			
+			if (action === 'Set API Key') {
+				vscode.commands.executeCommand('coachlint.setApiKey');
 			}
 		}
+	});
+
+	// Command to clear API key
+	const clearApiKeyCommand = vscode.commands.registerCommand('coachlint.clearApiKey', async () => {
+		const confirm = await vscode.window.showWarningMessage(
+			'Are you sure you want to clear the API key?',
+			'Yes', 'No'
+		);
+
+		if (confirm === 'Yes') {
+			await vscode.workspace.getConfiguration('coachlint').update('apiKey', undefined, vscode.ConfigurationTarget.Global);
+			explanationCache.clear();
+			vscode.window.showInformationMessage('🗑️ API key cleared');
+		}
+	});
+
+	context.subscriptions.push(setApiKeyCommand, showApiKeyStatusCommand, clearApiKeyCommand);
+
+	// Helper function to get API key
+	function getApiKey() {
+		return vscode.workspace.getConfiguration('coachlint').get('apiKey');
 	}
 
-	function isCompilationOrRuntimeError(diagnostic) {
+	// On Hover error explanation
+	const commandOnHover = vscode.languages.registerHoverProvider('*', {
+		async provideHover(document, position){
+			const diagnostics = vscode.languages.getDiagnostics(document.uri)
 
-		if (diagnostic.severity !== vscode.DiagnosticSeverity.Error) {
-			return false;
+			const diagnostic = diagnostics.find(d => d.range.contains(position))
+			
+			if (diagnostic) {
+				const aiExplanation = await getGeneratedExplanation(diagnostic, document.uri)
+
+				if (aiExplanation){
+					const markdown = new vscode.MarkdownString()
+
+					markdown.appendMarkdown(`**🤖 AI Explanation:**\n\n ${aiExplanation}`)
+					markdown.appendMarkdown(`\n\n----\n\n**Original Error:** ${diagnostic.message}`)
+
+					return new vscode.Hover(markdown)
+				}
+			}
+
+			return null
 		}
 
-		// Skip own diagnostics
-		if (diagnostic.source === 'coachlint') {
-			return false;
-		}
+	})
 
-		// Filter by error message keywords (compilation/runtime errors)
-		const message = diagnostic.message.toLowerCase();
-		const errorKeywords = [
-			'cannot find', 'not found',
-			'undefined', 'not defined',
-			'undeclared', 'unresolved',
-			'syntax error', 'parse error',
-			'type error', 'type mismatch',
-			'reference error',
-			'name error', 'attribute error',
-			'compilation error', 'build error',
-			'does not exist',
-			'missing import', 'import error',
-			'no such file', 'file not found'
-		];
+	async function getGeneratedExplanation(diagnostic, uri){
 
-		const hasErrorKeywords = errorKeywords.some(keyword => message.includes(keyword));
+		const key = `${uri.toString()}-${diagnostic.message}`;
 		
-		return hasErrorKeywords;
+		if (explanationCache.has(key)) {
+			return explanationCache.get(key)
+		}
+
+		try {
+			const errDetails = extractErrorDetails(uri, diagnostic)
+
+			if (errDetails) {
+				// Get API key from settings (optional)
+				const apiKey = getApiKey();
+
+				const response = await apiwrapper.postHoverError(errDetails, apiKey)
+
+				const explanation = response.message
+
+				explanationCache.set(key, explanation)
+
+				return explanation
+			}
+		}
+		catch (err){
+			console.log("Failed to get AI Explanation:", err)
+			
+			// Show user-friendly error message
+			if (err.message.includes('401') || err.message.includes('403')) {
+				vscode.window.showErrorMessage('CoachLint: Authentication failed. You may need to set an API key.');
+			} else {
+				vscode.window.showErrorMessage('CoachLint: Failed to get AI explanation. Check your connection.');
+			}
+		}
+
+		return null
 	}
+
+	context.subscriptions.push(commandOnHover);
 
 	function extractErrorDetails(uri, diagnostic) {
 		const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === uri.toString());
@@ -157,37 +211,6 @@ function activate(context) {
 		
 		return codeLines;
 	}
-
-	function logDiagnosticInput(input) {
-		if (!input) {
-			console.log('=== NO INPUT TO LOG ===');
-			return;
-		}
-
-		console.log('=== COMPILATION/RUNTIME ERROR ===');
-		console.log('Error:', input.errorMessage);
-		console.log('Source:', input.errorSource);
-		console.log('Language:', input.fileLanguage);
-		console.log('File:', input.fileName);
-		console.log('Line:', input.lineNumber);
-		
-		if (input.errorLine) {
-			console.log('\nError line:');
-			console.log(`${input.errorLine.number}: ${input.errorLine.text}`);
-			console.log('Highlighted:', input.errorLine.highlightedText);
-		}
-		
-		if (input.surroundingCode) {
-			console.log('\nSurrounding code:');
-			input.surroundingCode.forEach(line => {
-				console.log(`${line.prefix}${line.number}: ${line.text}`);
-			});
-		}
-		
-		console.log('====================================');
-	}
-	context.subscriptions.push(disposable);
-	context.subscriptions.push(commandDisposable);
 }
 
 // This method is called when your extension is deactivated

@@ -6,14 +6,18 @@ load_dotenv()
 
 api_key = os.getenv("GEMINI_API_KEY")
 
-def process_error_message(request):
+def process_current_error_message(request, api_key):
+    prompt = f"Explain the error in a very short manner should contain only two lines and shortly explain how to resolve it: {request.errorMessage}\n"
     
-    prompt = f"Explain the following error in a very short manner should contain only two lines and shortly explain how to resolve it: {request}\n"
-    message = generate_explanation(prompt)
+    ai_explanation = generate_explanation(prompt, api_key)
     
-    if message is None:
-        return "Failed to generate explanation"
-      
-    return message
+    message = f"""{request.fileName}:{request.lineNumber}:{request.columnNumber} timestamp: {request.timestamp}\n\n{ai_explanation}"""
+    
+    return {"message": message}
 
+def process_hover_error_message(request, api_key):
+    prompt = f"Explain the error in a very short manner should contain only two lines and shortly explain how to resolve it: {request.errorMessage}\n"
 
+    ai_explanation = generate_explanation(prompt, api_key)
+    
+    return {"message": ai_explanation}

@@ -16,9 +16,19 @@
   "contributes": {
     "commands": [
        {
-        "command": "coachlint.explainCurrentErrors",
-        "title": "Explain Current Errors",
-        "category": "Coachlint"
+        "command": "coachlint.setApiKey",
+        "title": "Set API Key",
+        "category": "CoachLint"
+      },
+      {
+        "command": "coachlint.showApiKeyStatus", 
+        "title": "Show API Key Status",
+        "category": "CoachLint"
+      },
+      {
+        "command": "coachlint.clearApiKey",
+        "title": "Clear API Key", 
+        "category": "CoachLint"
       }
     ]
   },
