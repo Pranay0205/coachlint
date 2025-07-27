@@ -21,3 +21,27 @@ def process_hover_error_message(request, api_key):
     ai_explanation = generate_explanation(prompt, api_key)
     
     return {"message": ai_explanation}
+
+
+def process_code_review_message(request, api_key):
+    prompt = f"""Review this Python code. Give EXACTLY 3 short suggestions only if there are issues otherwise don't include 📍 in your reponse and just say Good Code. Use the following format:
+
+📍 Line X: CATEGORY → Brief issue → Why it matters
+
+Categories: NAMING, PERFORMANCE, DOCS, LOGIC, POTENTIAL BUG, SECURITY, STYLE
+
+Code:
+{request.code}"""
+    
+    ai_response = generate_explanation(prompt, api_key)
+    
+    if ai_response is None:
+        return {"message": "Unable to generate code review suggestions"}
+    
+    count = ai_response.count('📍')
+    if count == 0:
+        message = "✅ GREAT CODE! No issues found."
+    else:
+        message = f"🔍 {count} SUGGESTIONS\n\n{ai_response}"
+    
+    return {"message": message}

@@ -52,4 +52,31 @@ async function postHoverError(errDetails, apiKey = null) {
   }
 }
 
-module.exports = {postCurrentError, postHoverError}
+
+async function postCodeReview(reviewData, apiKey = null) {
+  try {
+    console.log(reviewData)
+    
+    const config = {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    if (apiKey) {
+      config.headers['Authorization'] = `Bearer ${apiKey}`;
+    }
+    
+    const response = await apiClient.post("/code-review", reviewData, config);
+
+    console.log(`code review response: ${response.data}`);
+
+    return response.data;
+
+  } catch (error) {
+    console.error("Failed to post code review:", error);
+    throw error; 
+  }
+}
+
+module.exports = {postCurrentError, postHoverError, postCodeReview}

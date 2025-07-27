@@ -1,47 +1,60 @@
-# 🤖 Coachlint
+# 🤖 CoachLint - Your AI Programming Coach
 
-> AI-powered VS Code extension that explains compiler errors in simple terms
+> *Teaching you to understand, not just copy-paste*
 
-**Status**: Work in Progress 🚧
+[Boot.dev Hackathon](https://blog.boot.dev/news/hackathon-2025/)
 
-## What it does
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) 
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Google Gemini](https://img.shields.io/badge/google%20gemini-8E75B2?style=for-the-badge&logo=google%20gemini&logoColor=white)
+![Visual Studio Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)
 
-Transforms cryptic compiler errors into human-readable explanations using AI.
+CoachLint is your AI coding coach. It guides you through errors instead of ***just solving them for you.***
 
-```diff
-- Cannot find name 'undefinedVariable'
-+ 🤖 You're using a variable that doesn't exist. Check the spelling or declare it first.
-```
+## 🎯 My Motivation
 
-## Features
+Students are becoming increasingly dependent on quick code fixes and instant code generation. When we use external AI tools, there's no middle ground - the AI just gives you the answer. Students copy-paste solutions without understanding the **why** behind them.
 
-- ✅ Detects compilation errors from Python, Go 
-- ✅ Extracts error context and surrounding code
-- 🔄 AI explanations using Google Gemini (in progress)
-- ⏳ Interactive error help
+This approach makes us lose the core skill that makes a software engineer valuable: **understanding the problem and solving it systematically**.
 
-## Development
+**AI is best for breaking down complex errors into very easy and understandable explanations.** I believe CoachLint will help students learn more deeply instead of developing shallow programming skills.
 
-```bash
-git clone <repo>
-npm install
-code .
-# Press F5 to run
-```
+## 🚀 Features
 
-## Testing
+- **🔍 Error Explanations** - Hover over errors for plain English explanations
+- **📊 Code Quality Review** - Get improvement suggestions for your Python code
+- **🎓 Educational Focus** - Learn concepts, not just quick fixes
 
-Create files with errors:
-```python
-// test.py
-# Creates error for testing
-print(undefined_variable)  # Runtime error
-def test():
-    return 1 + "string"    # Type error
-```
+## ⚙️ Setup
 
-Check console for diagnostic extraction logs.
+### API Key Configuration
+1. Open Command Palette (`Ctrl+Shift+P`)
+2. Type "CoachLint: Set API Key"
+3. Enter your API key securely
 
-## License
+## 🎮 Usage
 
-MIT
+### Hover Error Explanations
+1. Write Python code with errors
+2. **Hover** over red squiggly lines
+3. Get instant AI explanation
+
+### Code Quality Review
+1. Open any Python file
+2. Press `Ctrl+Shift+P` → "CoachLint: Review Current File"
+3. Get suggestions in output panel
+
+## 🎛️ Commands
+
+- `CoachLint: Set API Key` - Configure API key
+- `CoachLint: Review Current File` - Get code suggestions
+- `CoachLint: Show API Key Status` - Check configuration
+
+## 🎉 Boot.dev Hackathon
+
+Created to promote **deep learning over shallow copying** in programming education.
+
+---
+
+### 💡 Remember: The goal isn't to fix your code faster - it's to make you a better programmer.

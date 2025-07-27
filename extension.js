@@ -5,6 +5,8 @@ function activate(context) {
 
 	// Cache explanations to avoid re-generating
 	const explanationCache = new Map();
+	let coachLintOutputChannel = vscode.window.createOutputChannel("CoachLint");
+	coachLintOutputChannel.appendLine('===================COACHLINT AI COACH======================\n');
 
 	// Command to set API key
 	const setApiKeyCommand = vscode.commands.registerCommand('coachlint.setApiKey', async () => {
@@ -210,6 +212,70 @@ function activate(context) {
 		}
 		
 		return codeLines;
+	}
+
+
+	const reviewCodeCommand = vscode.commands.registerCommand('coachlint.reviewCurrentFile', async () => {
+    const activeEditor = vscode.window.activeTextEditor;
+    
+    if (!activeEditor) {
+        vscode.window.showErrorMessage('No active Python file to review');
+        return;
+    }
+    
+    if (activeEditor.document.languageId !== 'python') {
+        vscode.window.showErrorMessage('Code review currently supports Python files only');
+        return;
+    }
+    
+    await reviewPythonFile(activeEditor);
+	});
+
+	context.subscriptions.push(reviewCodeCommand);
+
+
+	async function reviewPythonFile(editor) {
+    const code = editor.document.getText();
+    const fileName = editor.document.fileName;
+    
+    vscode.window.withProgress({
+        location: vscode.ProgressLocation.Notification,
+        title: "CoachLint is reviewing your code...",
+        cancellable: false
+    }, async () => {
+        
+        const reviewData = {
+            code: code,
+            fileName: fileName,
+            fileLanguage: 'python',
+            timestamp: new Date().toISOString()
+        };
+        
+        try {
+            const apiKey = getApiKey();
+            const response = await apiwrapper.postCodeReview(reviewData, apiKey);
+            
+            displayCodeReview(response, fileName);
+            
+        } catch (error) {
+            coachLintOutputChannel.appendLine('❌ Failed to get code review');
+            coachLintOutputChannel.show(true);
+        }
+    });
+}
+
+	function displayCodeReview(reviewResponse, fileName) {
+			coachLintOutputChannel.clear();
+			coachLintOutputChannel.appendLine('═══════════════════════════════════════');
+			coachLintOutputChannel.appendLine('🔍 COACHLINT CODE REVIEW');
+			coachLintOutputChannel.appendLine('═══════════════════════════════════════');
+			coachLintOutputChannel.appendLine(`📁 File: ${fileName}`);
+			coachLintOutputChannel.appendLine(`⏰ Analyzed: ${new Date().toLocaleString()}\n`);
+			
+			coachLintOutputChannel.appendLine(reviewResponse.message);
+			coachLintOutputChannel.appendLine('\n═══════════════════════════════════════');
+			
+			coachLintOutputChannel.show(true);
 	}
 }
 

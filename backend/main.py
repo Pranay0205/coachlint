@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List, Optional, Union, Dict, Any
 from request_processor import process_current_error_message
 from request_processor import process_hover_error_message
+from request_processor import process_code_review_message
 import os
 
 app = FastAPI()
@@ -48,6 +49,10 @@ class ErrorRequest(BaseModel):
     surroundingCode: Optional[List[SurroundingCodeLine]] = None
     timestamp: Optional[str] = None
     projectRoot: Optional[str] = None
+    
+class CodeReviewRequest(BaseModel):
+    code: str
+    fileName: Optional[str] = None
 
 def get_api_key(authorization: Optional[str] = Header(None)):
     """
@@ -103,3 +108,9 @@ def hover_error(
     except Exception as e:
         print(f"Error processing request: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+    
+    
+@app.post("/code-review")
+def review_code(request: CodeReviewRequest, authorization: Optional[str] = Header(None)):
+    api_key = get_api_key(authorization)
+    return process_code_review_message(request, api_key)

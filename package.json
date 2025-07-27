@@ -29,6 +29,11 @@
         "command": "coachlint.clearApiKey",
         "title": "Clear API Key", 
         "category": "CoachLint"
+      },
+      {
+        "command": "coachlint.reviewCurrentFile",
+        "title": "Review Current File",
+        "category": "CoachLint"
       }
     ]
   },
