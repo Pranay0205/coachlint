@@ -35,7 +35,18 @@
         "title": "Review Current File",
         "category": "CoachLint"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "CoachLint",
+      "properties": {
+        "coachlint.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Gemini API key for CoachLint AI explanations",
+          "scope": "application"
+        }
+      }
+    }
   },
   "scripts": {
     "lint": "eslint .",
@@ -51,6 +62,6 @@
     "eslint": "^9.25.1"
   },
   "dependencies": {
-    "axios": "^1.11.0"
+    "@google/generative-ai": "^0.21.0"
   }
 }

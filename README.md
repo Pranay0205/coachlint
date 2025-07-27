@@ -1,6 +1,5 @@
-# 🤖 CoachLint - Your AI Programming Coach
+# CoachLint - Your AI Programming Coach
 
-> *Teaching you to understand, not just copy-paste*
 
 [Boot.dev Hackathon](https://blog.boot.dev/news/hackathon-2025/)
 
@@ -12,7 +11,7 @@
 
 CoachLint is your AI coding coach. It guides you through errors instead of ***just solving them for you.***
 
-## 🎯 My Motivation
+## My Motivation
 
 Students are becoming increasingly dependent on quick code fixes and instant code generation. When we use external AI tools, there's no middle ground - the AI just gives you the answer. Students copy-paste solutions without understanding the **why** behind them.
 
@@ -20,20 +19,20 @@ This approach makes us lose the core skill that makes a software engineer valuab
 
 **AI is best for breaking down complex errors into very easy and understandable explanations.** I believe CoachLint will help students learn more deeply instead of developing shallow programming skills.
 
-## 🚀 Features
+## Features
 
-- **🔍 Error Explanations** - Hover over errors for plain English explanations
-- **📊 Code Quality Review** - Get improvement suggestions for your Python code
-- **🎓 Educational Focus** - Learn concepts, not just quick fixes
+- **Error Explanations** - Hover over errors for plain English explanations
+- **Code Quality Review** - Get improvement suggestions for your Python code
+- **Educational Focus** - Learn concepts, not just quick fixes
 
-## ⚙️ Setup
+## Setup
 
 ### API Key Configuration
 1. Open Command Palette (`Ctrl+Shift+P`)
 2. Type "CoachLint: Set API Key"
 3. Enter your API key securely
 
-## 🎮 Usage
+## Usage
 
 ### Hover Error Explanations
 1. Write Python code with errors
@@ -45,16 +44,16 @@ This approach makes us lose the core skill that makes a software engineer valuab
 2. Press `Ctrl+Shift+P` → "CoachLint: Review Current File"
 3. Get suggestions in output panel
 
-## 🎛️ Commands
+## Commands
 
 - `CoachLint: Set API Key` - Configure API key
 - `CoachLint: Review Current File` - Get code suggestions
 - `CoachLint: Show API Key Status` - Check configuration
 
-## 🎉 Boot.dev Hackathon
+## Boot.dev Hackathon
 
 Created to promote **deep learning over shallow copying** in programming education.
 
 ---
 
-### 💡 Remember: The goal isn't to fix your code faster - it's to make you a better programmer.
+### Remember: The goal isn't to fix your code faster - it's to make you a better programmer.

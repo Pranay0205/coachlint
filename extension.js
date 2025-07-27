@@ -1,5 +1,8 @@
 const vscode = require('vscode');
-const apiwrapper = require('./apiwrapper')
+const { 
+    process_hover_error_message, 
+    process_code_review_message 
+} = require('./request_processor');
 
 function activate(context) {
 
@@ -11,9 +14,9 @@ function activate(context) {
 	// Command to set API key
 	const setApiKeyCommand = vscode.commands.registerCommand('coachlint.setApiKey', async () => {
 		const apiKey = await vscode.window.showInputBox({
-			prompt: 'Enter your API key for CoachLint',
+			prompt: 'Enter your Gemini API key for CoachLint',
 			password: true, // Hide the input for security
-			placeHolder: 'your-api-key-here',
+			placeHolder: 'your-gemini-api-key-here',
 			validateInput: (value) => {
 				if (!value || value.trim().length === 0) {
 					return 'API key cannot be empty';
@@ -113,10 +116,15 @@ function activate(context) {
 			const errDetails = extractErrorDetails(uri, diagnostic)
 
 			if (errDetails) {
-				// Get API key from settings (optional)
+				// Get API key from settings
 				const apiKey = getApiKey();
 
-				const response = await apiwrapper.postHoverError(errDetails, apiKey)
+				if (!apiKey) {
+					vscode.window.showErrorMessage('CoachLint: Please set your Gemini API key first using "CoachLint: Set API Key" command.');
+					return null;
+				}
+
+				const response = await process_hover_error_message(errDetails, apiKey)
 
 				const explanation = response.message
 
@@ -129,10 +137,10 @@ function activate(context) {
 			console.log("Failed to get AI Explanation:", err)
 			
 			// Show user-friendly error message
-			if (err.message.includes('401') || err.message.includes('403')) {
-				vscode.window.showErrorMessage('CoachLint: Authentication failed. You may need to set an API key.');
+			if (err.message.includes('API key') || err.message.includes('authentication')) {
+				vscode.window.showErrorMessage('CoachLint: Authentication failed. Please check your API key.');
 			} else {
-				vscode.window.showErrorMessage('CoachLint: Failed to get AI explanation. Check your connection.');
+				vscode.window.showErrorMessage('CoachLint: Failed to get AI explanation. Check your connection and API key.');
 			}
 		}
 
@@ -214,68 +222,79 @@ function activate(context) {
 		return codeLines;
 	}
 
-
 	const reviewCodeCommand = vscode.commands.registerCommand('coachlint.reviewCurrentFile', async () => {
-    const activeEditor = vscode.window.activeTextEditor;
-    
-    if (!activeEditor) {
-        vscode.window.showErrorMessage('No active Python file to review');
-        return;
-    }
-    
-    if (activeEditor.document.languageId !== 'python') {
-        vscode.window.showErrorMessage('Code review currently supports Python files only');
-        return;
-    }
-    
-    await reviewPythonFile(activeEditor);
+		const activeEditor = vscode.window.activeTextEditor;
+		
+		if (!activeEditor) {
+			vscode.window.showErrorMessage('No active Python file to review');
+			return;
+		}
+		
+		if (activeEditor.document.languageId !== 'python') {
+			vscode.window.showErrorMessage('Code review currently supports Python files only');
+			return;
+		}
+		
+		await reviewPythonFile(activeEditor);
 	});
 
 	context.subscriptions.push(reviewCodeCommand);
 
-
 	async function reviewPythonFile(editor) {
-    const code = editor.document.getText();
-    const fileName = editor.document.fileName;
-    
-    vscode.window.withProgress({
-        location: vscode.ProgressLocation.Notification,
-        title: "CoachLint is reviewing your code...",
-        cancellable: false
-    }, async () => {
-        
-        const reviewData = {
-            code: code,
-            fileName: fileName,
-            fileLanguage: 'python',
-            timestamp: new Date().toISOString()
-        };
-        
-        try {
-            const apiKey = getApiKey();
-            const response = await apiwrapper.postCodeReview(reviewData, apiKey);
-            
-            displayCodeReview(response, fileName);
-            
-        } catch (error) {
-            coachLintOutputChannel.appendLine('❌ Failed to get code review');
-            coachLintOutputChannel.show(true);
-        }
-    });
-}
+		const code = editor.document.getText();
+		const fileName = editor.document.fileName;
+		
+		vscode.window.withProgress({
+			location: vscode.ProgressLocation.Notification,
+			title: "CoachLint is reviewing your code...",
+			cancellable: false
+		}, async () => {
+			
+			const reviewData = {
+				code: code,
+				fileName: fileName,
+				fileLanguage: 'python',
+				timestamp: new Date().toISOString()
+			};
+			
+			try {
+				const apiKey = getApiKey();
+
+				if (!apiKey) {
+					vscode.window.showErrorMessage('CoachLint: Please set your Gemini API key first using "CoachLint: Set API Key" command.');
+					return;
+				}
+
+				const response = await process_code_review_message(reviewData, apiKey);
+				
+				displayCodeReview(response, fileName);
+				
+			} catch (error) {
+				console.error('Code review error:', error);
+				coachLintOutputChannel.appendLine('❌ Failed to get code review');
+				coachLintOutputChannel.show(true);
+				
+				if (error.message.includes('API key') || error.message.includes('authentication')) {
+					vscode.window.showErrorMessage('CoachLint: Authentication failed. Please check your API key.');
+				} else {
+					vscode.window.showErrorMessage('CoachLint: Failed to get code review. Check your connection and API key.');
+				}
+			}
+		});
+	}
 
 	function displayCodeReview(reviewResponse, fileName) {
-			coachLintOutputChannel.clear();
-			coachLintOutputChannel.appendLine('═══════════════════════════════════════');
-			coachLintOutputChannel.appendLine('🔍 COACHLINT CODE REVIEW');
-			coachLintOutputChannel.appendLine('═══════════════════════════════════════');
-			coachLintOutputChannel.appendLine(`📁 File: ${fileName}`);
-			coachLintOutputChannel.appendLine(`⏰ Analyzed: ${new Date().toLocaleString()}\n`);
-			
-			coachLintOutputChannel.appendLine(reviewResponse.message);
-			coachLintOutputChannel.appendLine('\n═══════════════════════════════════════');
-			
-			coachLintOutputChannel.show(true);
+		coachLintOutputChannel.clear();
+		coachLintOutputChannel.appendLine('═══════════════════════════════════════');
+		coachLintOutputChannel.appendLine('🔍 COACHLINT CODE REVIEW');
+		coachLintOutputChannel.appendLine('═══════════════════════════════════════');
+		coachLintOutputChannel.appendLine(`📁 File: ${fileName}`);
+		coachLintOutputChannel.appendLine(`⏰ Analyzed: ${new Date().toLocaleString()}\n`);
+		
+		coachLintOutputChannel.appendLine(reviewResponse.message);
+		coachLintOutputChannel.appendLine('\n═══════════════════════════════════════');
+		
+		coachLintOutputChannel.show(true);
 	}
 }
 

@@ -1,82 +1,82 @@
-const apiClient = require("./apiClient");
+// const apiClient = require("./apiClient");
 
-async function postCurrentError(errDetails, apiKey = null) {
-  try {
-    console.log(errDetails)
+// async function postCurrentError(errDetails, apiKey = null) {
+//   try {
+//     console.log(errDetails)
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+//     const config = {
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     };
     
-    if (apiKey) {
-      config.headers['Authorization'] = `Bearer ${apiKey}`;
-    }
+//     if (apiKey) {
+//       config.headers['Authorization'] = `Bearer ${apiKey}`;
+//     }
     
-    const response = await apiClient.post("/current-error", errDetails, config);
+//     const response = await apiClient.post("/current-error", errDetails, config);
 
-    console.log(`current error function response: ${response.data}`);
+//     console.log(`current error function response: ${response.data}`);
 
-    return response.data;
+//     return response.data;
 
-  } catch (error) {
-    console.error("Failed to post error details:", error);
-    throw error; 
-  }
-}
+//   } catch (error) {
+//     console.error("Failed to post error details:", error);
+//     throw error; 
+//   }
+// }
 
-async function postHoverError(errDetails, apiKey = null) {
-  try {
-    console.log(errDetails)
+// async function postHoverError(errDetails, apiKey = null) {
+//   try {
+//     console.log(errDetails)
   
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+//     const config = {
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     };
     
-    if (apiKey) {
-      config.headers['Authorization'] = `Bearer ${apiKey}`;
-    }
+//     if (apiKey) {
+//       config.headers['Authorization'] = `Bearer ${apiKey}`;
+//     }
     
-    const response = await apiClient.post("/hover-error", errDetails, config);
+//     const response = await apiClient.post("/hover-error", errDetails, config);
 
-    console.log(`hover error function response: ${response.data}`);
+//     console.log(`hover error function response: ${response.data}`);
 
-    return response.data;
+//     return response.data;
 
-  } catch (error) {
-    console.error("Failed to post error details:", error);
-    throw error; 
-  }
-}
+//   } catch (error) {
+//     console.error("Failed to post error details:", error);
+//     throw error; 
+//   }
+// }
 
 
-async function postCodeReview(reviewData, apiKey = null) {
-  try {
-    console.log(reviewData)
+// async function postCodeReview(reviewData, apiKey = null) {
+//   try {
+//     console.log(reviewData)
     
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+//     const config = {
+//       headers: {
+//         'Content-Type': 'application/json'
+//       }
+//     };
     
-    if (apiKey) {
-      config.headers['Authorization'] = `Bearer ${apiKey}`;
-    }
+//     if (apiKey) {
+//       config.headers['Authorization'] = `Bearer ${apiKey}`;
+//     }
     
-    const response = await apiClient.post("/code-review", reviewData, config);
+//     const response = await apiClient.post("/code-review", reviewData, config);
 
-    console.log(`code review response: ${response.data}`);
+//     console.log(`code review response: ${response.data}`);
 
-    return response.data;
+//     return response.data;
 
-  } catch (error) {
-    console.error("Failed to post code review:", error);
-    throw error; 
-  }
-}
+//   } catch (error) {
+//     console.error("Failed to post code review:", error);
+//     throw error; 
+//   }
+// }
 
-module.exports = {postCurrentError, postHoverError, postCodeReview}
+// module.exports = {postCurrentError, postHoverError, postCodeReview}
