@@ -1,13 +1,11 @@
 const { generate_explanation } = require('./gemini_wrapper');
 
-async function process_current_error_message(request, apiKey) {
-    const prompt = `Explain the error in a very short manner should contain only two lines and shortly explain how to resolve it: ${request.errorMessage}\n`;
+async function process_hover_function_help(request, apiKey) {
+     const prompt = `Explain this function in 2-3 lines: what it does, its parameters, and provide a one-line usage example.\nFunction: ${request.functionName}\nContext: ${request.functionCode}`;
+          
+      const ai_explanation = await generate_explanation(prompt, apiKey);
     
-    const ai_explanation = await generate_explanation(prompt, apiKey);
-    
-    const message = `${request.fileName}:${request.lineNumber}:${request.columnNumber} timestamp: ${request.timestamp}\n\n${ai_explanation}`;
-    
-    return { message: message };
+    return { message: ai_explanation };
 }
 
 async function process_hover_error_message(request, apiKey) {
@@ -46,7 +44,7 @@ ${request.code}`;
 }
 
 module.exports = {
-    process_current_error_message,
+    process_hover_function_help,
     process_hover_error_message,
     process_code_review_message
 };

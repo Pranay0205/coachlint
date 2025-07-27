@@ -5,6 +5,8 @@ const {
 } = require('./request_processor');
 
 function activate(context) {
+	
+	console.log("CoachLint is running...!")
 
 	// Cache explanations to avoid re-generating
 	const explanationCache = new Map();
@@ -80,7 +82,7 @@ function activate(context) {
 	}
 
 	// On Hover error explanation
-	const commandOnHover = vscode.languages.registerHoverProvider('*', {
+	const OnErrorHoverExplanation = vscode.languages.registerHoverProvider('*', {
 		async provideHover(document, position){
 			const diagnostics = vscode.languages.getDiagnostics(document.uri)
 
@@ -97,8 +99,7 @@ function activate(context) {
 
 					return new vscode.Hover(markdown)
 				}
-			}
-
+			} 
 			return null
 		}
 
@@ -147,7 +148,7 @@ function activate(context) {
 		return null
 	}
 
-	context.subscriptions.push(commandOnHover);
+	context.subscriptions.push(OnErrorHoverExplanation);
 
 	function extractErrorDetails(uri, diagnostic) {
 		const document = vscode.workspace.textDocuments.find(doc => doc.uri.toString() === uri.toString());
