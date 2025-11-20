@@ -1,15 +1,15 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-async function generate_explanation(prompt, apiKey) {
+async function generate_explanation(prompt, apiKey, model_name = "gemini-2.5-flash-lite") {
   try {
     if (!apiKey) {
       throw new Error("API key is required");
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
+    const modelInstance = genAI.getGenerativeModel({ model: model_name });
 
-    const result = await model.generateContent(prompt);
+    const result = await modelInstance.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
 
